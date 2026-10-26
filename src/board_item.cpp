@@ -46,23 +46,19 @@ void BoardItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidge
     font.setPixelSize(21);
     painter->setFont(font);
     painter->drawText(QRectF(170, 185, 120, 35), Qt::AlignCenter, QStringLiteral("start"));
-    painter->drawText(QRectF(1370, 690, 100, 35), Qt::AlignCenter, QStringLiteral("end"));
+    painter->drawText(QRectF(1340, 690, 100, 35), Qt::AlignCenter, QStringLiteral("end"));
 
     QPainterPath path;
     path.moveTo(160, 250);
-    path.lineTo(1410, 250);
-    path.lineTo(1410, 500);
-    path.lineTo(185, 500);
-    path.lineTo(185, 750);
-    path.lineTo(1430, 750);
+    path.lineTo(1140, 250);
+    path.lineTo(1140, 500);
+    path.lineTo(455, 500);
+    path.lineTo(455, 750);
+    path.lineTo(1436, 750);
     painter->drawPath(path);
 
-    const QPolygonF rightArrow{QPointF(1430, 750), QPointF(1416, 742), QPointF(1416, 758)};
+    const QPolygonF rightArrow{QPointF(1450, 750), QPointF(1436, 742), QPointF(1436, 758), QPointF(1450, 750)};
     painter->drawPolyline(rightArrow);
-    const QPolygonF turnRight{QPointF(1410, 250), QPointF(1396, 242), QPointF(1396, 258)};
-    painter->drawPolyline(turnRight);
-    const QPolygonF turnLeft{QPointF(185, 500), QPointF(199, 492), QPointF(199, 508)};
-    painter->drawPolyline(turnLeft);
 }
 
 QVector<int> BoardItem::taskIds() const {
