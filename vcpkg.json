@@ -1,0 +1,11 @@
+{
+  "name": "hojoki",
+  "version-string": "0.1.0",
+  "builtin-baseline": "3c4706f7aba0155cb34c366b5ef3397e75e0d14e",
+  "dependencies": [
+    "qtbase",
+    "qtdeclarative",
+    "gtest",
+    "spdlog"
+  ]
+}
