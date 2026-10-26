@@ -1,6 +1,6 @@
 # Hojoki
 
-A small Qt 6 Widgets application for learning and experimenting with Qt Quick's Scene Graph. The first window is intentionally empty. Qt Quick is already available to the CMake project for future experiments.
+A Qt 6 task board for experimenting with interactive graphics. The current board uses Qt Graphics View (`QGraphicsScene` and reusable `QGraphicsObject` items); Qt Quick remains available for later Scene Graph experiments.
 
 ## Requirements
 
@@ -22,3 +22,10 @@ ctest --preset debug
 Select the `windows-debug` configure preset and the `hojoki` launch target in CMake Tools. Press F5 and choose **Hojoki (CMake target)** to start the app. CMake Tools resolves the built executable path for `launch.json`.
 
 The test runs Qt with its offscreen platform plugin so it can run without displaying a window.
+The build copies Qt's Windows platform plugin into the executable's `platforms` directory for launching from VS Code or Explorer.
+
+## Task board
+
+Drag a task to another slot to change its priority. Tasks between the old and new slots animate into place. Priority follows the arrow: left to right on the first row, right to left on the second, then left to right on the third. The number on each task stays with that task when it moves.
+
+Right click a task to set its state to **busy** (red), **pending** (yellow), or **done** (green).
