@@ -65,3 +65,61 @@ TEST(MainWidgetTest, RightClickDuringDragSnapsTheTaskToItsSlot) {
     EXPECT_EQ(task->pos(), board->slotTopLeft(5));
     EXPECT_EQ(task->zValue(), 1);
 }
+
+TEST(MainWidgetTest, DroppingOutsideBorderRestoresOrderFromDragStart) {
+    MainWidget window;
+    window.show();
+    QApplication::processEvents();
+    BoardItem* board = nullptr;
+    for (QGraphicsItem* item : window.scene()->items()) {
+        if (auto* candidate = dynamic_cast<BoardItem*>(item)) board = candidate;
+    }
+    ASSERT_NE(board, nullptr);
+
+    TaskItem* task = board->taskById(1);
+    const QVector<int> original = board->taskIds();
+    const QPoint from = window.mapFromScene(task->mapToScene(task->boundingRect().center()));
+    const QPoint middle = window.mapFromScene(board->slotTopLeft(5)
+        + task->boundingRect().center());
+    const QPoint outside = window.mapFromScene(QPointF(20, 500));
+    QTest::mousePress(window.viewport(), Qt::LeftButton, Qt::NoModifier, from);
+    QTest::mouseMove(window.viewport(), middle, 20);
+    ASSERT_NE(board->taskIds(), original);
+    QTest::mouseMove(window.viewport(), outside, 20);
+    QTest::mouseRelease(window.viewport(), Qt::LeftButton, Qt::NoModifier, outside);
+    QTest::qWait(350);
+
+    EXPECT_EQ(board->taskIds(), original);
+    EXPECT_EQ(task->pos(), board->slotTopLeft(0));
+    EXPECT_EQ(task->zValue(), 1);
+    EXPECT_EQ(task->cursor().shape(), Qt::OpenHandCursor);
+}
+
+TEST(MainWidgetTest, EscapeDuringDragRestoresOrderFromDragStart) {
+    MainWidget window;
+    window.show();
+    QApplication::processEvents();
+    BoardItem* board = nullptr;
+    for (QGraphicsItem* item : window.scene()->items()) {
+        if (auto* candidate = dynamic_cast<BoardItem*>(item)) board = candidate;
+    }
+    ASSERT_NE(board, nullptr);
+
+    TaskItem* task = board->taskById(1);
+    const QVector<int> original = board->taskIds();
+    const QPoint from = window.mapFromScene(task->mapToScene(task->boundingRect().center()));
+    const QPoint middle = window.mapFromScene(board->slotTopLeft(5)
+        + task->boundingRect().center());
+    QTest::mousePress(window.viewport(), Qt::LeftButton, Qt::NoModifier, from);
+    QTest::mouseMove(window.viewport(), middle, 20);
+    ASSERT_NE(board->taskIds(), original);
+    QTest::keyClick(window.viewport(), Qt::Key_Escape);
+    EXPECT_EQ(task->cursor().shape(), Qt::OpenHandCursor);
+    QTest::qWait(350);
+    QTest::mouseRelease(window.viewport(), Qt::LeftButton, Qt::NoModifier, middle);
+
+    EXPECT_EQ(board->taskIds(), original);
+    EXPECT_EQ(task->pos(), board->slotTopLeft(0));
+    EXPECT_EQ(task->zValue(), 1);
+    EXPECT_EQ(task->cursor().shape(), Qt::OpenHandCursor);
+}

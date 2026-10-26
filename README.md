@@ -28,4 +28,6 @@ The build copies Qt's Windows platform plugin into the executable's `platforms` 
 
 Drag a task to another slot to change its priority. Tasks between the old and new slots animate into place. Priority follows the arrow: left to right on the first row, right to left on the second, then left to right on the third. The number on each task stays with that task when it moves.
 
+Release a task outside the board's white border, or press **Escape** while dragging, to cancel that move and restore the previous order.
+
 Right click a task to set its state to **busy** (red), **pending** (yellow), or **done** (green).

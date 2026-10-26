@@ -115,7 +115,9 @@ void TaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
 
 void TaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
-        if (auto* board = dynamic_cast<BoardItem*>(parentItem())) board->endDrag(this);
+        if (auto* board = dynamic_cast<BoardItem*>(parentItem())) {
+            board->releaseDrag(this, event->scenePos());
+        }
         setCursor(Qt::OpenHandCursor);
         event->accept();
     } else {

@@ -19,12 +19,15 @@ public:
 
     void beginDrag(TaskItem* task);
     void updateDrag(TaskItem* task, const QPointF& scenePos, const QPointF& grabOffset);
+    void releaseDrag(TaskItem* task, const QPointF& scenePos);
     void endDrag(TaskItem* task);
+    bool cancelDrag();
 
 private:
     int nearestSlot(const QPointF& center) const;
     void animateTasks();
 
     QVector<TaskItem*> tasks_;
+    QVector<TaskItem*> dragStartOrder_;
     TaskItem* dragged_ = nullptr;
 };

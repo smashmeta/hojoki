@@ -2,9 +2,18 @@
 
 #include "task_item.h"
 
+#include <QCursor>
 #include <QPainter>
 #include <QPainterPath>
 #include <limits>
+
+namespace {
+QPainterPath boardOutline() {
+    QPainterPath path;
+    path.addRoundedRect(QRectF(35, 35, 1530, 930), 28, 28);
+    return path;
+}
+} // namespace
 
 BoardItem::BoardItem(QGraphicsItem* parent) : QGraphicsObject(parent) {
     const int ids[] = {1, 3, 2, 4, 6, 5, 8, 9, 7};
@@ -27,7 +36,7 @@ void BoardItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidge
     painter->fillRect(boundingRect(), QColor("#111111"));
     painter->setPen(QPen(QColor("#d8d8d8"), 3));
     painter->setBrush(Qt::NoBrush);
-    painter->drawRoundedRect(QRectF(35, 35, 1530, 930), 28, 28);
+    painter->drawPath(boardOutline());
 
     QFont font = painter->font();
     font.setFamily(QStringLiteral("Segoe UI"));
@@ -89,7 +98,8 @@ bool BoardItem::moveTask(int id, int destinationIndex) {
 }
 
 void BoardItem::beginDrag(TaskItem* task) {
-    if (!tasks_.contains(task)) return;
+    if (dragged_ || !tasks_.contains(task)) return;
+    dragStartOrder_ = tasks_;
     dragged_ = task;
     task->stopAnimation();
     task->setZValue(10);
@@ -102,11 +112,32 @@ void BoardItem::updateDrag(TaskItem* task, const QPointF& scenePos, const QPoint
     moveTask(task->id(), nearestSlot(center));
 }
 
+void BoardItem::releaseDrag(TaskItem* task, const QPointF& scenePos) {
+    if (dragged_ != task) return;
+    if (boardOutline().contains(mapFromScene(scenePos))) {
+        endDrag(task);
+    } else {
+        cancelDrag();
+    }
+}
+
 void BoardItem::endDrag(TaskItem* task) {
     if (dragged_ != task) return;
     dragged_ = nullptr;
+    dragStartOrder_.clear();
     task->setZValue(1);
     task->animateTo(slotTopLeft(tasks_.indexOf(task)));
+}
+
+bool BoardItem::cancelDrag() {
+    if (!dragged_) return false;
+    dragged_->setCursor(Qt::OpenHandCursor);
+    dragged_->setZValue(1);
+    dragged_ = nullptr;
+    tasks_ = dragStartOrder_;
+    dragStartOrder_.clear();
+    animateTasks();
+    return true;
 }
 
 int BoardItem::nearestSlot(const QPointF& center) const {

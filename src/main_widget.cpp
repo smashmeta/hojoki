@@ -2,6 +2,7 @@
 
 #include "board_item.h"
 
+#include <QKeyEvent>
 #include <QResizeEvent>
 
 MainWidget::MainWidget(QWidget* parent) : QGraphicsView(parent) {
@@ -11,11 +12,19 @@ MainWidget::MainWidget(QWidget* parent) : QGraphicsView(parent) {
     setFrameShape(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    auto* board = new BoardItem;
-    scene_.addItem(board);
-    scene_.setSceneRect(board->boundingRect());
+    board_ = new BoardItem;
+    scene_.addItem(board_);
+    scene_.setSceneRect(board_->boundingRect());
     setScene(&scene_);
     resize(1200, 760);
+}
+
+void MainWidget::keyPressEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_Escape && board_->cancelDrag()) {
+        event->accept();
+        return;
+    }
+    QGraphicsView::keyPressEvent(event);
 }
 
 void MainWidget::resizeEvent(QResizeEvent* event) {
